@@ -1,6 +1,6 @@
 {
   "name": "sass-dynamic-imports",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "import dynamically sass files",
   "main": "lib/index.js",
   "repository": {
