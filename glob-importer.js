@@ -11,7 +11,6 @@ module.exports = function globImporter(url, prev) {
 
     const sassImports = files
         .map((file) => {
-            // Assurez-vous de retourner le chemin relatif correct pour l'importation SASS
             return `@import "${file}";`;
         })
         .join("\n");
