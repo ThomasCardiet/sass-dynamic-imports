@@ -18,21 +18,30 @@ function compile() {
     sassCompiler.compileFile(source, destination);
 }
 
-// Parse @import declarations and return absolute glob paths
 function getGlobPathsFromImports(fileContent) {
-    const importRegex = /@import\s+['"](.+\.scss)['"];/g;
+    const importRegex =
+        /@import\s+['"]((?:\.\.\/)*(?:[^'"]+\*{2}\/\*{2}\/)?[^'"]+\.scss)['"];/g;
     let matches;
     let paths = [];
 
     while ((matches = importRegex.exec(fileContent)) !== null) {
-        let importPath = path.resolve(path.dirname(source), matches[1]);
-        paths.push(importPath);
+        paths.push(matches[1]);
     }
 
-    return paths;
+    paths = paths.map((path) => {
+        return path
+            .split("/")
+            .filter((param) => {
+                return !param.includes("*");
+            })
+            .join("/");
+    });
+
+    return paths.map((globPath) =>
+        path.resolve(path.dirname(source), globPath)
+    );
 }
 
-// Initialize and configure file watcher
 function initializeWatcher() {
     try {
         const fileContent = fs.readFileSync(source, "utf8");
@@ -44,8 +53,8 @@ function initializeWatcher() {
 
         watcher.on("all", (event, filePath) => {
             if (!/\.(scss|sass)$/.test(filePath)) return;
-
             console.log(`Event ${event} detected on file ${filePath}`);
+
             compile();
 
             if (["add", "unlink", "addDir", "unlinkDir"].includes(event)) {

@@ -13,7 +13,7 @@ npm i sass
 ## Install library
 
 ```bash
-npm i sass-dynamic-imports
+npm i -g sass-dynamic-imports
 ```
 
 ## Use watcher
