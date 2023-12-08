@@ -2,11 +2,18 @@
 
 The library is designed to import dynamically scss files in dynamic folders
 
+## Install Sass
+
+Sass library is required to use this package
+
+```bash
+npm i sass
+```
 
 ## Install library
 
 ```bash
-npm i postcss-import-dynamic-scss
+npm i sass-dynamic-imports
 ```
 
 ## Use watcher
@@ -21,7 +28,7 @@ dynamic-sass --watch path/file.scss:path/file.css
 npm i concurrently
 ```
 
-Add thi scripts on your package.json "scripts" key:
+Add this scripts on your package.json "scripts" key:
 
 ```bash
   "dev:sass": "dynamic-sass --watch styles/index.scss:styles/index.css",

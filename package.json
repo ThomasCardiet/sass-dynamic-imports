@@ -1,6 +1,6 @@
 {
   "name": "sass-dynamic-imports",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "import dynamically sass files",
   "main": "sass-compiler.js",
   "repository": {
