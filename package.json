@@ -1,6 +1,6 @@
 {
-  "name": "postcss-import-dynamic-scss",
-  "version": "1.0.0",
+  "name": "sass-dynamic-imports",
+  "version": "0.0.1",
   "description": "import dynamically sass files",
   "main": "sass-compiler.js",
   "repository": {
@@ -12,11 +12,9 @@
   },
   "keywords": [
     "front-end",
-    "postcss",
     "import",
     "extension",
     "glob",
-    "postcss-plugin",
     "scss",
     "sass"
   ],

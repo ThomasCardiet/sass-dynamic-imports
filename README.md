@@ -1,14 +1,29 @@
-# dynamic-sass-imports [![Build Status][ci-img]][ci]
+# Sass Dynamic imports
 
-bash `
-  dynamic-sass --watch path/file.scss:path/file.css
-`
+The library is designed to import dynamically scss files in dynamic folders
 
-you can use concurrently to use sass compile and dev script
 
-`
-  "scripts": {
-    "dev:sass": "dynamic-sass --watch styles/index.scss:styles/index.css",
-    "dev": "concurrently --kill-others \"next dev\" \"npm run dev:sass\"",
-    }
-`
+## Install library
+
+```bash
+npm i postcss-import-dynamic-scss
+```
+
+## Use watcher
+
+```bash
+dynamic-sass --watch path/file.scss:path/file.css
+```
+
+## Use with concurrently
+
+```bash
+npm i concurrently
+```
+
+Add thi scripts on your package.json "scripts" key:
+
+```bash
+  "dev:sass": "dynamic-sass --watch styles/index.scss:styles/index.css",
+  "dev": "concurrently --kill-others \"next dev\" \"npm run dev:sass\"",
+```
