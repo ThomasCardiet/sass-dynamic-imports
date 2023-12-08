@@ -34,3 +34,11 @@ Add this scripts on your package.json "scripts" key:
   "dev:sass": "dynamic-sass --watch styles/index.scss:styles/index.css",
   "dev": "concurrently --kill-others \"next dev\" \"npm run dev:sass\"",
 ```
+
+## Scss file syntax
+
+*in .scss file:
+
+```bash
+  @import './[folder_name]/**/*.scss';
+```

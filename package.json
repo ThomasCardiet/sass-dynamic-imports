@@ -1,14 +1,14 @@
 {
   "name": "sass-dynamic-imports",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "import dynamically sass files",
-  "main": "lib/sass-compiler.js",
+  "main": "lib/index.js",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com:ThomasCardiet/sass-dynamic-imports.git"
   },
   "bin": {
-    "dynamic-sass": "lib/dynamic-sass.js"
+    "dynamic-sass": "./dist/dynamic-sass.js"
   },
   "keywords": [
     "front-end",
