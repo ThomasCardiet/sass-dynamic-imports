@@ -8,6 +8,13 @@ const yargs = require("yargs/yargs");
 const { hideBin } = require("yargs/helpers");
 const argv = yargs(hideBin(process.argv)).argv;
 
+const WATCH_EVENT = {
+    ADD: "add",
+    UNLINK: "unlink",
+    ADD_DIR: "addDir",
+    UNLINK_DIR: "unlinkDir",
+};
+
 if (!argv.watch || argv.watch.split(":").length !== 2) {
     throw new Error("Invalid watch parameter. Usage: source:destination");
 }
@@ -28,7 +35,13 @@ function getGlobPathsFromImports(fileContent) {
         paths.push(matches[1]);
     }
 
-    paths = paths.map((path) => {
+    return paths.map((globPath) =>
+        path.resolve(path.dirname(source), globPath)
+    );
+}
+
+function getDynamicFolderRoot(globPaths) {
+    return globPaths.map((path) => {
         return path
             .split("/")
             .filter((param) => {
@@ -36,10 +49,6 @@ function getGlobPathsFromImports(fileContent) {
             })
             .join("/");
     });
-
-    return paths.map((globPath) =>
-        path.resolve(path.dirname(source), globPath)
-    );
 }
 
 function initializeWatcher() {
@@ -47,22 +56,66 @@ function initializeWatcher() {
         const fileContent = fs.readFileSync(source, "utf8");
         const globPaths = getGlobPathsFromImports(fileContent);
 
-        const watcher = chokidar.watch([source, ...globPaths], {
+        const rooDynamicFolders = getDynamicFolderRoot(globPaths);
+        const watcher = chokidar.watch([source, ...rooDynamicFolders], {
             persistent: true,
         });
 
         watcher.on("all", (event, filePath) => {
             if (!/\.(scss|sass)$/.test(filePath)) return;
+
+            // If filePath is not source && verify if filePath respect dynamic import
+            if (source !== filePath) {
+                const fileFolderPath = filePath
+                    .split("/")
+                    .slice(0, -1)
+                    .join("/");
+                const dynamicRootFindPath = rooDynamicFolders.find((path) => {
+                    return fileFolderPath.startsWith(path);
+                });
+
+                if (!dynamicRootFindPath) return;
+
+                const dynamicFindPath = globPaths.find((path) => {
+                    return path.startsWith(dynamicRootFindPath);
+                });
+
+                if (!dynamicFindPath) return;
+
+                const nbDynamicPathFiles = dynamicFindPath
+                    .split("/")
+                    .filter((path) => path === "**").length;
+
+                const lastDynamicFolder = dynamicRootFindPath.split("/").pop();
+
+                const lastDynamicFolderIndex = filePath
+                    .split("/")
+                    .indexOf(lastDynamicFolder);
+
+                const isValid =
+                    filePath
+                        .split("/")
+                        .slice(
+                            lastDynamicFolderIndex,
+                            filePath.split("/").length - 1
+                        )
+                        .filter((path) => path !== lastDynamicFolder).length ===
+                    nbDynamicPathFiles;
+
+                if (!isValid) return;
+            }
+
             console.log(`Event ${event} detected on file ${filePath}`);
 
             compile();
 
-            if (["add", "unlink", "addDir", "unlinkDir"].includes(event)) {
-                watcher.unwatch(globPaths);
-                const newGlobPaths = getGlobPathsFromImports(
-                    fs.readFileSync(source, "utf8")
-                );
-                watcher.add(newGlobPaths);
+            if (Object.values(WATCH_EVENT).includes(event)) {
+                watcher.unwatch(rooDynamicFolders);
+                const newFileContent = fs.readFileSync(source, "utf8");
+                const newGlobPaths = getGlobPathsFromImports(newFileContent);
+                const newRooDynamicFolders = getDynamicFolderRoot(newGlobPaths);
+
+                watcher.add(newRooDynamicFolders);
             }
         });
 
