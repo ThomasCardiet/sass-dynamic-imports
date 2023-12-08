@@ -30,15 +30,19 @@ npm i concurrently
 
 Add this scripts on your package.json "scripts" key:
 
-```bash
+```json
+ "scripts": {
   "dev:sass": "dynamic-sass --watch styles/index.scss:styles/index.css",
   "dev": "concurrently --kill-others \"next dev\" \"npm run dev:sass\"",
+ }
 ```
 
-## Scss file syntax
+## Usage
 
-*in .scss file:
+in scss file:
 
-```bash
+```scss
   @import './[folder_name]/**/*.scss';
 ```
+
+will watch all scss files on any folder on [folder_name] folder
