@@ -21,8 +21,8 @@ if (!argv.watch || argv.watch.split(":").length !== 2) {
 
 const [source, destination] = argv.watch.split(":");
 
-function compile(from = source, to = destination) {
-    sassCompiler.compileFile(from, to);
+function compile() {
+    sassCompiler.compileFile(source, destination);
 }
 
 function getGlobPathsFromImports(fileContent) {
@@ -35,7 +35,9 @@ function getGlobPathsFromImports(fileContent) {
         paths.push(matches[1]);
     }
 
-    return paths.map((globPath) => path.resolve("", globPath));
+    return paths.map((globPath) =>
+        path.resolve(path.dirname(source), globPath)
+    );
 }
 
 function getDynamicFolderRoot(globPaths) {
