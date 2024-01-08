@@ -46,3 +46,11 @@ in scss file:
 ```
 
 will watch all scss files on any folder on [folder_name] folder
+
+```scss
+  .class {
+    color: env(VARIABLE)
+  }
+```
+
+will use env Variable
