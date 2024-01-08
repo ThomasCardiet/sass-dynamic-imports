@@ -1,6 +1,6 @@
 {
   "name": "sass-dynamic-imports",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "import dynamically sass files",
   "main": "lib/index.js",
   "repository": {
@@ -44,10 +44,14 @@
     "yargs": "^17.7.2"
   },
   "devDependencies": {
-    "eslint": "^3.11.1"
+    "eslint": "^3.11.1",
+    "nodemon": "^3.0.2",
+    "concurrently": "^8.2.2"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:sass": "dynamic-sass --watch styles/index.scss:styles/index.css",
+    "start": "concurrently --kill-others \"nodemon\" \"npm run start:sass\""
   },
   "eslintConfig": {
     "extends": "postcss/es5"

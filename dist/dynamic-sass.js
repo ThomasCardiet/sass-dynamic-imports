@@ -21,8 +21,8 @@ if (!argv.watch || argv.watch.split(":").length !== 2) {
 
 const [source, destination] = argv.watch.split(":");
 
-function compile() {
-    sassCompiler.compileFile(source, destination);
+function compile(from = source, to = destination) {
+    sassCompiler.compileFile(from, to);
 }
 
 function getGlobPathsFromImports(fileContent) {
@@ -35,9 +35,7 @@ function getGlobPathsFromImports(fileContent) {
         paths.push(matches[1]);
     }
 
-    return paths.map((globPath) =>
-        path.resolve(path.dirname(source), globPath)
-    );
+    return paths.map((globPath) => path.resolve("", globPath));
 }
 
 function getDynamicFolderRoot(globPaths) {
@@ -56,8 +54,8 @@ function initializeWatcher() {
         const fileContent = fs.readFileSync(source, "utf8");
         const globPaths = getGlobPathsFromImports(fileContent);
 
-        const rooDynamicFolders = getDynamicFolderRoot(globPaths);
-        const watcher = chokidar.watch([source, ...rooDynamicFolders], {
+        const rootDynamicFolders = getDynamicFolderRoot(globPaths);
+        const watcher = chokidar.watch([source, ...rootDynamicFolders], {
             persistent: true,
         });
 
@@ -70,7 +68,7 @@ function initializeWatcher() {
                     .split("/")
                     .slice(0, -1)
                     .join("/");
-                const dynamicRootFindPath = rooDynamicFolders.find((path) => {
+                const dynamicRootFindPath = rootDynamicFolders.find((path) => {
                     return fileFolderPath.startsWith(path);
                 });
 
@@ -110,7 +108,7 @@ function initializeWatcher() {
             compile();
 
             if (Object.values(WATCH_EVENT).includes(event)) {
-                watcher.unwatch(rooDynamicFolders);
+                watcher.unwatch(rootDynamicFolders);
                 const newFileContent = fs.readFileSync(source, "utf8");
                 const newGlobPaths = getGlobPathsFromImports(newFileContent);
                 const newRooDynamicFolders = getDynamicFolderRoot(newGlobPaths);

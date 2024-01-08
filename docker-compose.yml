@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  sass-dynamic-imports:
+    build: .
+    container_name: sass-dynamic-imports-container
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/usr/src/sass-dynamic-imports
+    working_dir: /usr/src/sass-dynamic-imports
+    stdin_open: true
+    tty: true
+    command: sh -c "npm install && npm start"
