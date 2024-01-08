@@ -56,7 +56,7 @@ will watch all scss files on any folder on [folder_name] folder
 will use env Variable
 
 ```scss
-  @minimify
+  @minimify;
 ```
 
 will minimify css file
