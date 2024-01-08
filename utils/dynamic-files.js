@@ -1,10 +1,23 @@
 const { separator } = require("./platforms");
 const { formatPathSlashs } = require("./paths");
 
+/**
+ * @param {Object} props
+ * @param {String} props.url
+ * @param {String} props.separator
+ */
 const getNbDynamicPathFiles = ({ url, separator = "/" }) => {
     return url.split(separator).filter((path) => path === "**").length;
 };
 
+/**
+ * @param {Object} props
+ * @param {String} props.source
+ * @param {String} props.filePath
+ * @param {String[]} props.rootDynamicFolders
+ * @param {String[]} props.globPaths
+ * @return {Boolean}
+ */
 const verifyDynamicImport = ({
     source,
     filePath,
@@ -20,13 +33,13 @@ const verifyDynamicImport = ({
             return fileFolderPath.startsWith(path);
         });
 
-        if (!dynamicRootFindPath) return;
+        if (!dynamicRootFindPath) return false;
 
         const dynamicFindPath = globPaths.find((path) => {
             return path.startsWith(dynamicRootFindPath);
         });
 
-        if (!dynamicFindPath) return;
+        if (!dynamicFindPath) return false;
 
         const nbDynamicPathFiles = getNbDynamicPathFiles({
             url: dynamicFindPath,
