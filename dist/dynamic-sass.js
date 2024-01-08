@@ -61,8 +61,6 @@ function initializeWatcher() {
             persistent: true,
         });
 
-        console.log("WATCHER", rootDynamicFolders);
-
         watcher.on("all", (event, filePath) => {
             if (!/\.(scss|sass)$/.test(filePath)) return;
 
