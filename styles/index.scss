@@ -1,4 +1,4 @@
 @import "../components/**/*.scss";
 .color {
-    color: red;
+    color: env(PRIMARY-500);
 }

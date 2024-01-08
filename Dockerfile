@@ -15,6 +15,7 @@ RUN npm install object-assign
 RUN npm install pify
 RUN npm install resolve
 RUN npm install sass
+RUN npm install dotenv
 RUN npm install --save-dev concurrently
 RUN npm install -g sass-dynamic-imports
 

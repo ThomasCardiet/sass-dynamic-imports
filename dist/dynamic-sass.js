@@ -6,22 +6,10 @@ const fs = require("fs");
 const path = require("path");
 const yargs = require("yargs/yargs");
 const { hideBin } = require("yargs/helpers");
+const { separator } = require("../utils/platforms");
+const { WATCH_EVENT } = require("../utils/watch");
+const { verifyDynamicImport } = require("../utils/dynamic-files");
 const argv = yargs(hideBin(process.argv)).argv;
-
-const WATCH_EVENT = {
-    ADD: "add",
-    UNLINK: "unlink",
-    ADD_DIR: "addDir",
-    UNLINK_DIR: "unlinkDir",
-};
-
-const OS_PLATFORM = {
-    WINDOWS: "win32",
-    MACOS: "darwin"
-}
-
-const platform = process.platform;
-const separator = platform === OS_PLATFORM.WINDOWS ? "\\" : '/';
 
 if (!argv.watch || argv.watch.split(":").length !== 2) {
     throw new Error("Invalid watch parameter. Usage: source:destination");
@@ -65,56 +53,23 @@ function initializeWatcher() {
         const globPaths = getGlobPathsFromImports(fileContent);
 
         const rootDynamicFolders = getDynamicFolderRoot(globPaths);
-        
+
         const watcher = chokidar.watch([source, ...rootDynamicFolders], {
             persistent: true,
         });
-
-
 
         watcher.on("all", (event, filePath) => {
             if (!/\.(scss|sass)$/.test(filePath)) return;
 
             // If filePath is not source && verify if filePath respect dynamic import
-            if (source !== filePath.replace(/\\/g, '/')) {
-                const fileFolderPath = filePath
-                    .split(separator)
-                    .slice(0, -1)
-                    .join(separator);
-                const dynamicRootFindPath = rootDynamicFolders.find((path) => {
-                    return fileFolderPath.startsWith(path);
-                });
+            const isDynamicImport = verifyDynamicImport({
+                source,
+                filePath,
+                rootDynamicFolders,
+                globPaths,
+            });
 
-                if (!dynamicRootFindPath) return;
-
-                const dynamicFindPath = globPaths.find((path) => {
-                    return path.startsWith(dynamicRootFindPath);
-                });
-
-                if (!dynamicFindPath) return;
-
-                const nbDynamicPathFiles = dynamicFindPath
-                    .split(separator)
-                    .filter((path) => path === "**").length;
-
-                const lastDynamicFolder = dynamicRootFindPath.split(separator).pop();
-
-                const lastDynamicFolderIndex = filePath
-                    .split(separator)
-                    .indexOf(lastDynamicFolder);
-
-                const isValid =
-                    filePath
-                        .split(separator)
-                        .slice(
-                            lastDynamicFolderIndex,
-                            filePath.split(separator).length - 1
-                        )
-                        .filter((path) => path !== lastDynamicFolder).length ===
-                    nbDynamicPathFiles;
-
-                if (!isValid) return;
-            }
+            if (!isDynamicImport) return;
 
             console.log(`Event ${event} detected on file ${filePath}`);
 

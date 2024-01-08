@@ -1,6 +1,6 @@
 {
   "name": "sass-dynamic-imports",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "import dynamically sass files",
   "main": "lib/index.js",
   "repository": {
@@ -33,6 +33,7 @@
   "homepage": "https://github.com/ThomasCardiet/sass-dynamic-imports#readme",
   "dependencies": {
     "chokidar": "^3.5.3",
+    "dotenv": "^16.3.1",
     "glob": "^10.3.10",
     "globby": "^6.1.0",
     "is-glob": "^4.0.0",
@@ -44,9 +45,9 @@
     "yargs": "^17.7.2"
   },
   "devDependencies": {
+    "concurrently": "^8.2.2",
     "eslint": "^3.11.1",
-    "nodemon": "^3.0.2",
-    "concurrently": "^8.2.2"
+    "nodemon": "^3.0.2"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
