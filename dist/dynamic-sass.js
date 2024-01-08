@@ -15,6 +15,14 @@ const WATCH_EVENT = {
     UNLINK_DIR: "unlinkDir",
 };
 
+const OS_PLATFORM = {
+    WINDOWS: "win32",
+    MACOS: "darwin"
+}
+
+const platform = process.platform;
+const separator = platform === OS_PLATFORM.WINDOWS ? "\\" : '/';
+
 if (!argv.watch || argv.watch.split(":").length !== 2) {
     throw new Error("Invalid watch parameter. Usage: source:destination");
 }
@@ -43,11 +51,11 @@ function getGlobPathsFromImports(fileContent) {
 function getDynamicFolderRoot(globPaths) {
     return globPaths.map((path) => {
         return path
-            .split("/")
+            .split(separator)
             .filter((param) => {
                 return !param.includes("*");
             })
-            .join("/");
+            .join(separator);
     });
 }
 
@@ -57,19 +65,22 @@ function initializeWatcher() {
         const globPaths = getGlobPathsFromImports(fileContent);
 
         const rootDynamicFolders = getDynamicFolderRoot(globPaths);
+        
         const watcher = chokidar.watch([source, ...rootDynamicFolders], {
             persistent: true,
         });
+
+
 
         watcher.on("all", (event, filePath) => {
             if (!/\.(scss|sass)$/.test(filePath)) return;
 
             // If filePath is not source && verify if filePath respect dynamic import
-            if (source !== filePath) {
+            if (source !== filePath.replace(/\\/g, '/')) {
                 const fileFolderPath = filePath
-                    .split("/")
+                    .split(separator)
                     .slice(0, -1)
-                    .join("/");
+                    .join(separator);
                 const dynamicRootFindPath = rootDynamicFolders.find((path) => {
                     return fileFolderPath.startsWith(path);
                 });
@@ -83,21 +94,21 @@ function initializeWatcher() {
                 if (!dynamicFindPath) return;
 
                 const nbDynamicPathFiles = dynamicFindPath
-                    .split("/")
+                    .split(separator)
                     .filter((path) => path === "**").length;
 
-                const lastDynamicFolder = dynamicRootFindPath.split("/").pop();
+                const lastDynamicFolder = dynamicRootFindPath.split(separator).pop();
 
                 const lastDynamicFolderIndex = filePath
-                    .split("/")
+                    .split(separator)
                     .indexOf(lastDynamicFolder);
 
                 const isValid =
                     filePath
-                        .split("/")
+                        .split(separator)
                         .slice(
                             lastDynamicFolderIndex,
-                            filePath.split("/").length - 1
+                            filePath.split(separator).length - 1
                         )
                         .filter((path) => path !== lastDynamicFolder).length ===
                     nbDynamicPathFiles;
