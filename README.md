@@ -1,6 +1,6 @@
 # Sass Dynamic imports
 
-The library is designed to import dynamically scss files in dynamic folders
+The library is designed to import dynamically scss files in dynamic folders.
 
 ## Install Sass
 
