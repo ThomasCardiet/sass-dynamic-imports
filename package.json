@@ -47,12 +47,19 @@
   "devDependencies": {
     "concurrently": "^8.2.2",
     "eslint": "^3.11.1",
+    "jest": "^29.7.0",
     "nodemon": "^3.0.2"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "start:sass": "dynamic-sass --watch styles/index.scss:styles/index.css",
     "start": "concurrently --kill-others \"nodemon\" \"npm run start:sass\""
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/__tests__/**/*.test.js"
+    ]
   },
   "eslintConfig": {
     "extends": "postcss/es5"
